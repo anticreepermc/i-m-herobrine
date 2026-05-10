@@ -3,6 +3,7 @@ package com.imherobrine.world;
 import com.imherobrine.ImHerobrineMod;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.level.saveddata.SavedData;
 
 public class HerobrineWorldData extends SavedData {
@@ -12,7 +13,11 @@ public class HerobrineWorldData extends SavedData {
     private boolean totemPlaced;
 
     public static HerobrineWorldData get(ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(HerobrineWorldData::load, HerobrineWorldData::new, FILE_ID);
+        return level.getDataStorage().computeIfAbsent(factory(), FILE_ID);
+    }
+
+    private static SavedData.Factory<HerobrineWorldData> factory() {
+        return new SavedData.Factory<>(HerobrineWorldData::new, HerobrineWorldData::load, DataFixTypes.LEVEL);
     }
 
     public static HerobrineWorldData load(CompoundTag tag) {

@@ -3,9 +3,7 @@ package com.imherobrine.network;
 import com.imherobrine.HerobrineGameEvents;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkEvent;
-
-import java.util.function.Supplier;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 
 public record C2SHerobrineActionPacket(Action action) {
 
@@ -25,14 +23,11 @@ public record C2SHerobrineActionPacket(Action action) {
         return new C2SHerobrineActionPacket(buf.readEnum(Action.class));
     }
 
-    public static void handle(C2SHerobrineActionPacket msg, Supplier<NetworkEvent.Context> ctxSupplier) {
-        NetworkEvent.Context ctx = ctxSupplier.get();
-        ctx.enqueueWork(() -> {
-            ServerPlayer player = ctx.getSender();
-            if (player != null) {
-                HerobrineGameEvents.handleServerAction(player, msg.action());
-            }
-        });
+    public static void handle(C2SHerobrineActionPacket msg, CustomPayloadEvent.Context ctx) {
+        ServerPlayer player = ctx.getSender();
+        if (player != null) {
+            HerobrineGameEvents.handleServerAction(player, msg.action());
+        }
         ctx.setPacketHandled(true);
     }
 }

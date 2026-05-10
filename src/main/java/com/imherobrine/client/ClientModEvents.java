@@ -41,19 +41,19 @@ final class ClientTickHandler {
             return;
         }
         if (HerobrineKeyBindings.LIGHTNING.consumeClick()) {
-            HerobrineNetworking.CHANNEL.sendToServer(new C2SHerobrineActionPacket(Action.LIGHTNING));
+            HerobrineNetworking.sendToServer(new C2SHerobrineActionPacket(Action.LIGHTNING));
         }
         if (HerobrineKeyBindings.BUFFS.consumeClick()) {
-            HerobrineNetworking.CHANNEL.sendToServer(new C2SHerobrineActionPacket(Action.APPLY_BUFFS));
+            HerobrineNetworking.sendToServer(new C2SHerobrineActionPacket(Action.APPLY_BUFFS));
         }
         if (HerobrineKeyBindings.CLEAR.consumeClick()) {
-            HerobrineNetworking.CHANNEL.sendToServer(new C2SHerobrineActionPacket(Action.CLEAR_BUFFS));
+            HerobrineNetworking.sendToServer(new C2SHerobrineActionPacket(Action.CLEAR_BUFFS));
         }
         if (HerobrineKeyBindings.TOGGLE_FLY.consumeClick()) {
-            HerobrineNetworking.CHANNEL.sendToServer(new C2SHerobrineActionPacket(Action.TOGGLE_FLY));
+            HerobrineNetworking.sendToServer(new C2SHerobrineActionPacket(Action.TOGGLE_FLY));
         }
         if (HerobrineKeyBindings.CLEAR_LEAVES.consumeClick()) {
-            HerobrineNetworking.CHANNEL.sendToServer(new C2SHerobrineActionPacket(Action.CLEAR_NEARBY_LEAVES));
+            HerobrineNetworking.sendToServer(new C2SHerobrineActionPacket(Action.CLEAR_NEARBY_LEAVES));
         }
     }
 }
