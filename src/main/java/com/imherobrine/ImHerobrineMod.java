@@ -11,8 +11,9 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 public final class ImHerobrineMod {
     public static final String MODID = "imherobrine";
 
-    public ImHerobrineMod(FMLJavaModLoadingContext context) {
-        IEventBus modBus = context.getModEventBus();
+    public ImHerobrineMod() {
+        IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+        
         modBus.addListener(this::onCommonSetup);
         MinecraftForge.EVENT_BUS.register(HerobrineGameEvents.class);
     }
