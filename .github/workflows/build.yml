@@ -2,39 +2,35 @@ name: Build Forge Mod
 
 on:
   push:
-    branches: [ "main", "1.20.3" ] # Сборка запускается при пуше в эти ветки
+    branches:
+      - '1.20.4'
   pull_request:
-    branches: [ "main", "1.20.3" ] # И при создании PR
+    branches:
+      - '1.20.4'
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Клонируем репозиторий
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # 2. Устанавливаем Java 17 (требуется для Minecraft 1.20.3)
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
 
-    # 3. Настраиваем Gradle и кэширование зависимостей
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v3
 
-    # 4. Делаем скрипт gradlew исполняемым (актуально для Linux-серверов GitHub)
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
-    # 5. Запускаем сборку мода
     - name: Build with Gradle
       run: ./gradlew build
 
-    # 6. Сохраняем готовый .jar файл как артефакт сборки
     - name: Upload Build Artifact
       uses: actions/upload-artifact@v4
       with:
