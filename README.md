@@ -1,2 +1,2 @@
-Licensed All Rights Reserved.
+Licensed All Rights Reserved
 Source Code for read Only
