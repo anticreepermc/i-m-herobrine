@@ -4,7 +4,6 @@ import com.imherobrine.network.C2SHerobrineActionPacket.Action;
 import com.imherobrine.world.HerobrineWorldData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
@@ -28,9 +27,11 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
+import java.util.UUID;
+
 public final class HerobrineGameEvents {
-    private static final ResourceLocation HEALTH_BOOST_ID = ResourceLocation.fromNamespaceAndPath(
-            ImHerobrineMod.MODID, "extra_hp");
+    private static final UUID HEALTH_BOOST_ID = UUID.fromString("8e3b4c2d-1a0f-4e5d-9b8c-7a6f5e4d3c2b");
+    private static final String HEALTH_BOOST_NAME = "imherobrine_extra_hp";
     private static final String NBT_FLY = "imherobrine_survival_fly";
     private static final int BUFF_DURATION_INFINITE = -1;
     private static final int BUFF_AMPLIFIER_STRONG = 9;
@@ -102,7 +103,7 @@ public final class HerobrineGameEvents {
         if (maxHealth != null) {
             maxHealth.removeModifier(HEALTH_BOOST_ID);
             maxHealth.addTransientModifier(
-                    new AttributeModifier(HEALTH_BOOST_ID, 10.0D, AttributeModifier.Operation.ADD_VALUE));
+                    new AttributeModifier(HEALTH_BOOST_ID, HEALTH_BOOST_NAME, 10.0D, AttributeModifier.Operation.ADD_VALUE));
         }
         float missing = player.getMaxHealth() - player.getHealth();
         if (missing > 0) {
@@ -185,7 +186,7 @@ public final class HerobrineGameEvents {
 
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        if (event.getPhase() != TickEvent.Phase.END || !(event.player instanceof ServerPlayer player)) {
+        if (event.phase != TickEvent.Phase.END || !(event.player instanceof ServerPlayer player)) {
             return;
         }
         if (player.isCreative() || player.isSpectator()) {
