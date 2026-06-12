@@ -5,6 +5,7 @@ import com.imherobrine.world.HerobrineWorldData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -13,7 +14,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -32,9 +32,7 @@ public final class HerobrineGameEvents {
     private static final UUID HEALTH_BOOST_ID = UUID.fromString("8e3b4c2d-1a0f-4e5d-9b8c-7a6f5e4d3c2b");
     private static final String HEALTH_BOOST_NAME = "imherobrine_extra_hp";
     private static final String NBT_FLY = "imherobrine_survival_fly";
-    /** -1 = бесконечная длительность (пока не снять молоком / смертью и т.д.) */
     private static final int BUFF_DURATION_INFINITE = -1;
-    /** Высокий уровень силы / защиты (ур. X) */
     private static final int BUFF_AMPLIFIER_STRONG = 9;
     private static final int LEAF_CLEAR_RADIUS = 30;
     private static final int LEAF_CLEAR_RADIUS_SQ = LEAF_CLEAR_RADIUS * LEAF_CLEAR_RADIUS;
@@ -95,7 +93,6 @@ public final class HerobrineGameEvents {
     }
 
     private static void applyHerobrineBuffs(ServerPlayer player) {
-        // ambient, visible(частицы), showIcon — false,false,false: без пузырей и без иконки в углу
         player.addEffect(hiddenInfinite(MobEffects.DAMAGE_BOOST, BUFF_AMPLIFIER_STRONG));
         player.addEffect(hiddenInfinite(MobEffects.DAMAGE_RESISTANCE, BUFF_AMPLIFIER_STRONG));
         player.addEffect(hiddenInfinite(MobEffects.FIRE_RESISTANCE, 0));
