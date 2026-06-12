@@ -10,7 +10,7 @@ import net.minecraftforge.network.SimpleChannel;
 public final class HerobrineNetworking {
     private static final int PROTOCOL = 1;
     public static final SimpleChannel CHANNEL = ChannelBuilder
-            .named(new ResourceLocation(ImHerobrineMod.MODID, "main"))
+            .named(ResourceLocation.fromNamespaceAndPath(ImHerobrineMod.MODID, "main"))
             .networkProtocolVersion(PROTOCOL)
             .simpleChannel();
 

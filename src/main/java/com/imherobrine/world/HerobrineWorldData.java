@@ -1,6 +1,7 @@
 package com.imherobrine.world;
 
 import com.imherobrine.ImHerobrineMod;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.datafix.DataFixTypes;
@@ -20,14 +21,14 @@ public class HerobrineWorldData extends SavedData {
         return new SavedData.Factory<>(HerobrineWorldData::new, HerobrineWorldData::load, DataFixTypes.LEVEL);
     }
 
-    public static HerobrineWorldData load(CompoundTag tag) {
+    public static HerobrineWorldData load(CompoundTag tag, HolderLookup.Provider registries) {
         HerobrineWorldData data = new HerobrineWorldData();
         data.totemPlaced = tag.getBoolean(KEY_TOTEM);
         return data;
     }
 
     @Override
-    public CompoundTag save(CompoundTag tag) {
+    public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
         tag.putBoolean(KEY_TOTEM, totemPlaced);
         return tag;
     }
