@@ -12,6 +12,7 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -80,7 +81,7 @@ public final class HerobrineGameEvents {
         } else {
             pos = player.getEyePosition().add(player.getLookAngle().scale(32.0D));
         }
-        var bolt = EntityType.LIGHTNING_BOLT.create(level);
+        var bolt = EntityType.LIGHTNING_BOLT.create(level, EntitySpawnReason.TRIGGERED);
         if (bolt != null) {
             bolt.moveTo(pos.x, pos.y, pos.z);
             level.addFreshEntity(bolt);
