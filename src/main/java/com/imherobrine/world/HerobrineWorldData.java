@@ -1,36 +1,37 @@
 package com.imherobrine.world;
 
 import com.imherobrine.ImHerobrineMod;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.datafix.DataFixTypes;
 import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.saveddata.SavedDataType;
 
 public class HerobrineWorldData extends SavedData {
     private static final String FILE_ID = ImHerobrineMod.MODID + "_world";
     private static final String KEY_TOTEM = "totem_placed";
+    private static final Codec<HerobrineWorldData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            Codec.BOOL.optionalFieldOf(KEY_TOTEM, false).forGetter(HerobrineWorldData::isTotemPlaced)
+    ).apply(instance, HerobrineWorldData::new));
+    private static final SavedDataType<HerobrineWorldData> TYPE = new SavedDataType<>(
+            FILE_ID,
+            HerobrineWorldData::new,
+            CODEC,
+            DataFixTypes.LEVEL
+    );
 
     private boolean totemPlaced;
 
     public static HerobrineWorldData get(ServerLevel level) {
-        return level.getDataStorage().computeIfAbsent(factory(), FILE_ID);
+        return level.getDataStorage().computeIfAbsent(TYPE);
     }
 
-    private static SavedData.Factory<HerobrineWorldData> factory() {
-        return new SavedData.Factory<>(HerobrineWorldData::new, HerobrineWorldData::load, DataFixTypes.LEVEL);
+    public HerobrineWorldData() {
     }
 
-    public static HerobrineWorldData load(CompoundTag tag, HolderLookup.Provider registries) {
-        HerobrineWorldData data = new HerobrineWorldData();
-        data.totemPlaced = tag.getBoolean(KEY_TOTEM);
-        return data;
-    }
-
-    @Override
-    public CompoundTag save(CompoundTag tag, HolderLookup.Provider registries) {
-        tag.putBoolean(KEY_TOTEM, totemPlaced);
-        return tag;
+    private HerobrineWorldData(boolean totemPlaced) {
+        this.totemPlaced = totemPlaced;
     }
 
     public boolean isTotemPlaced() {

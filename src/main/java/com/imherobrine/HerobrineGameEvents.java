@@ -83,7 +83,7 @@ public final class HerobrineGameEvents {
         }
         var bolt = EntityType.LIGHTNING_BOLT.create(level, EntitySpawnReason.TRIGGERED);
         if (bolt != null) {
-            bolt.moveTo(pos.x, pos.y, pos.z);
+            bolt.setPos(pos.x, pos.y, pos.z);
             level.addFreshEntity(bolt);
         }
     }
@@ -93,8 +93,8 @@ public final class HerobrineGameEvents {
     }
 
     private static void applyHerobrineBuffs(ServerPlayer player) {
-        player.addEffect(hiddenInfinite(MobEffects.DAMAGE_BOOST, BUFF_AMPLIFIER_STRONG));
-        player.addEffect(hiddenInfinite(MobEffects.DAMAGE_RESISTANCE, BUFF_AMPLIFIER_STRONG));
+        player.addEffect(hiddenInfinite(MobEffects.STRENGTH, BUFF_AMPLIFIER_STRONG));
+        player.addEffect(hiddenInfinite(MobEffects.RESISTANCE, BUFF_AMPLIFIER_STRONG));
         player.addEffect(hiddenInfinite(MobEffects.FIRE_RESISTANCE, 0));
         player.addEffect(hiddenInfinite(MobEffects.HERO_OF_THE_VILLAGE, BUFF_AMPLIFIER_STRONG));
 
@@ -122,13 +122,13 @@ public final class HerobrineGameEvents {
 
     private static void toggleSurvivalFly(ServerPlayer player) {
         var root = player.getPersistentData();
-        boolean next = !root.getBoolean(NBT_FLY);
+        boolean next = !root.getBoolean(NBT_FLY).orElse(false);
         root.putBoolean(NBT_FLY, next);
         syncAbilities(player);
     }
 
     private static boolean isSurvivalFlyEnabled(ServerPlayer player) {
-        return player.getPersistentData().getBoolean(NBT_FLY);
+        return player.getPersistentData().getBoolean(NBT_FLY).orElse(false);
     }
 
     private static void syncAbilities(ServerPlayer player) {
