@@ -27,9 +27,10 @@ final class FabricNetworking {
 
     record ActionPayload(HerobrineAction action) implements CustomPacketPayload {
         static final Type<ActionPayload> TYPE = new Type<>(ID);
-        static final StreamCodec<RegistryFriendlyByteBuf, ActionPayload> CODEC =
-                StreamCodec.composite(ByteBufCodecs.VAR_INT, value -> value.action().ordinal(),
-                        value -> new ActionPayload(HerobrineAction.values()[value]), ActionPayload::new);
+        static final StreamCodec<RegistryFriendlyByteBuf, ActionPayload> CODEC = StreamCodec.of(
+                (buffer, payload) -> buffer.writeVarInt(payload.action().ordinal()),
+                buffer -> new ActionPayload(HerobrineAction.values()[buffer.readVarInt()])
+        );
 
         @Override
         public Type<? extends CustomPacketPayload> type() {
