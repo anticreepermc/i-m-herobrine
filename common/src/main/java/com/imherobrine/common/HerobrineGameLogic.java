@@ -24,6 +24,10 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 public final class HerobrineGameLogic {
     private static final ResourceLocation HEALTH_BOOST_ID = ResourceLocation.fromNamespaceAndPath("imherobrine", "extra_hp");
     private static final String NBT_FLY = "imherobrine_survival_fly";
@@ -31,6 +35,7 @@ public final class HerobrineGameLogic {
     private static final int BUFF_AMPLIFIER_STRONG = 9;
     private static final int LEAF_CLEAR_RADIUS = 30;
     private static final int LEAF_CLEAR_RADIUS_SQ = LEAF_CLEAR_RADIUS * LEAF_CLEAR_RADIUS;
+    private static final Map<UUID, Boolean> SURVIVAL_FLY = new HashMap<>();
 
     private HerobrineGameLogic() {
     }
@@ -46,7 +51,7 @@ public final class HerobrineGameLogic {
     }
 
     private static void clearNearbyLeaves(ServerPlayer player) {
-        ServerLevel level = player.serverLevel();
+        ServerLevel level = (ServerLevel) player.level();
         BlockPos center = player.blockPosition();
         int r = LEAF_CLEAR_RADIUS;
         for (int dx = -r; dx <= r; dx++) {
@@ -66,7 +71,7 @@ public final class HerobrineGameLogic {
     }
 
     private static void spawnLightning(ServerPlayer player) {
-        ServerLevel level = player.serverLevel();
+        ServerLevel level = (ServerLevel) player.level();
         HitResult hit = player.pick(128.0D, 0.0F, false);
         Vec3 pos;
         if (hit.getType() == HitResult.Type.BLOCK) {
@@ -116,14 +121,13 @@ public final class HerobrineGameLogic {
     }
 
     private static void toggleSurvivalFly(ServerPlayer player) {
-        var root = player.getPersistentData();
-        boolean next = !root.getBoolean(NBT_FLY).orElse(false);
-        root.putBoolean(NBT_FLY, next);
+        boolean next = !isSurvivalFlyEnabled(player);
+        SURVIVAL_FLY.put(player.getUUID(), next);
         syncAbilities(player);
     }
 
     private static boolean isSurvivalFlyEnabled(ServerPlayer player) {
-        return player.getPersistentData().getBoolean(NBT_FLY).orElse(false);
+        return SURVIVAL_FLY.getOrDefault(player.getUUID(), false);
     }
 
     private static void syncAbilities(ServerPlayer player) {
