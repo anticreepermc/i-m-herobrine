@@ -25,7 +25,7 @@ public record C2SHerobrineActionPacket(Action action) {
 
     public static void handle(C2SHerobrineActionPacket msg, CustomPayloadEvent.Context ctx) {
         ServerPlayer player = ctx.getSender();
-        if (player != null) {
+        if (player != null && player.hasPermissions(2)) {
             HerobrineGameEvents.handleServerAction(player, msg.action());
         }
         ctx.setPacketHandled(true);

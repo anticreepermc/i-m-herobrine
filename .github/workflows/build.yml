@@ -1,4 +1,4 @@
-name: Build Forge Mod
+name: Build MultiLoader Mod
 
 on:
   push:
@@ -12,27 +12,62 @@ jobs:
       contents: read
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Set up JDK 21
-      uses: actions/setup-java@v4
-      with:
-        java-version: '21'
-        distribution: 'temurin'
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: temurin
 
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v3
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
 
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
 
-    - name: Build with Gradle
-      run: ./gradlew build
+      - name: Build Forge, Fabric and NeoForge
+        run: ./gradlew :forge:build :fabric:build :neoforge:build
 
-    - name: Upload Build Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: forge-mod-jar
-        path: build/libs/*.jar
-        if-no-files-found: error
+      - name: Prepare loader artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          version=$(grep '^version=' gradle.properties | cut -d= -f2)
+          minecraft_version=$(grep '^minecraft_version=' gradle.properties | cut -d= -f2)
+          mkdir -p artifacts/forge artifacts/fabric artifacts/neoforge artifacts/quilt
+          find forge/build/libs -maxdepth 1 -type f -name '*.jar' ! -name '*-sources.jar' ! -name '*-javadoc.jar' -exec cp {} artifacts/forge/ \;
+          find fabric/build/libs -maxdepth 1 -type f -name '*.jar' ! -name '*-sources.jar' ! -name '*-javadoc.jar' -exec cp {} artifacts/fabric/ \;
+          find neoforge/build/libs -maxdepth 1 -type f -name '*.jar' ! -name '*-sources.jar' ! -name '*-javadoc.jar' -exec cp {} artifacts/neoforge/ \;
+          fabric_jar=$(find fabric/build/libs -maxdepth 1 -type f -name '*.jar' ! -name '*-sources.jar' ! -name '*-javadoc.jar' | head -n 1)
+          test -n "$fabric_jar"
+          cp "$fabric_jar" "artifacts/quilt/imherobrine-${version}-mc${minecraft_version}-quilt.jar"
+
+      - name: Upload Forge artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: imherobrine-forge
+          path: artifacts/forge/*.jar
+          if-no-files-found: error
+
+      - name: Upload Fabric artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: imherobrine-fabric
+          path: artifacts/fabric/*.jar
+          if-no-files-found: error
+
+      - name: Upload NeoForge artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: imherobrine-neoforge
+          path: artifacts/neoforge/*.jar
+          if-no-files-found: error
+
+      - name: Upload Quilt artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: imherobrine-quilt
+          path: artifacts/quilt/*.jar
+          if-no-files-found: error
