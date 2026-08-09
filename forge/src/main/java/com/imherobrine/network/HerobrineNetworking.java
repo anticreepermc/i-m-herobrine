@@ -4,7 +4,6 @@ import com.imherobrine.ImHerobrineMod;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.ChannelBuilder;
 import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.SimpleChannel;
 
@@ -13,15 +12,9 @@ public final class HerobrineNetworking {
     public static final SimpleChannel CHANNEL = ChannelBuilder
             .named(ResourceLocation.fromNamespaceAndPath(ImHerobrineMod.MODID, "main"))
             .networkProtocolVersion(PROTOCOL)
-            .clientAcceptedVersions(version -> isCompatible(version))
-            .serverAcceptedVersions(version -> isCompatible(version))
+            .clientAcceptedVersions((status, versions) -> true)
+            .serverAcceptedVersions((status, versions) -> true)
             .simpleChannel();
-
-    private static boolean isCompatible(String version) {
-        return PROTOCOL.equals(version)
-                || NetworkRegistry.ABSENT.equals(version)
-                || NetworkRegistry.ACCEPTVANILLA.equals(version);
-    }
 
     private static int id = 0;
 

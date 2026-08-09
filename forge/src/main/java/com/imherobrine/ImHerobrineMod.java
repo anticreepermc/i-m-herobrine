@@ -2,7 +2,6 @@ package com.imherobrine;
 
 import com.imherobrine.network.HerobrineNetworking;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -11,8 +10,8 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 public final class ImHerobrineMod {
     public static final String MODID = "imherobrine";
 
-    public ImHerobrineMod() {
-        IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+    public ImHerobrineMod(FMLJavaModLoadingContext context) {
+        var modBus = context.getModEventBus();
         
         modBus.addListener(this::onCommonSetup);
         MinecraftForge.EVENT_BUS.register(HerobrineGameEvents.class);
