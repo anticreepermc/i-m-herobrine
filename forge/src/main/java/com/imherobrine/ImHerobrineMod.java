@@ -12,7 +12,5 @@ public final class ImHerobrineMod {
     public ImHerobrineMod(FMLJavaModLoadingContext context) {
         HerobrineNetworking.register();
         MinecraftForge.EVENT_BUS.register(HerobrineGameEvents.class);
-        MinecraftForge.EVENT_BUS.addListener((net.minecraftforge.event.server.ServerStartedEvent event) ->
-                com.imherobrine.common.HerobrineGameLogic.placeTotemIfNeeded(event.getServer().overworld()));
     }
 }

@@ -1,7 +1,7 @@
 package com.imherobrine;
 
 import com.imherobrine.network.C2SHerobrineActionPacket.Action;
-import com.imherobrine.world.HerobrineWorldData;
+import com.imherobrine.common.HerobrineGameLogic;
 import net.minecraft.core.Holder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -152,38 +152,7 @@ public final class HerobrineGameEvents {
 
     @SubscribeEvent
     public static void onServerStarted(ServerStartedEvent event) {
-        ServerLevel overworld = event.getServer().overworld();
-        HerobrineWorldData data = HerobrineWorldData.get(overworld);
-        if (data.isTotemPlaced()) {
-            return;
-        }
-        BlockPos spawn = overworld.getSharedSpawnPos();
-        BlockPos surface = overworld.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, spawn);
-        placeTotem(overworld, surface);
-        data.setTotemPlaced();
-    }
-
-    private static void placeTotem(ServerLevel level, BlockPos ground) {
-        if (level.dimension() != Level.OVERWORLD) {
-            return;
-        }
-        for (int dz = -1; dz <= 1; dz++) {
-            for (int dx = -1; dx <= 1; dx++) {
-                BlockPos p = ground.offset(dx, 0, dz);
-                BlockState state = dx == 0 && dz == 0
-                        ? Blocks.MOSSY_COBBLESTONE.defaultBlockState()
-                        : Blocks.GOLD_BLOCK.defaultBlockState();
-                level.setBlock(p, state, 3);
-            }
-        }
-        BlockPos aboveCenter = ground.above();
-        level.setBlock(aboveCenter, Blocks.NETHERRACK.defaultBlockState(), 3);
-        BlockState torchOnGold = Blocks.REDSTONE_TORCH.defaultBlockState();
-        level.setBlock(aboveCenter.north(), torchOnGold, 3);
-        level.setBlock(aboveCenter.south(), torchOnGold, 3);
-        level.setBlock(aboveCenter.west(), torchOnGold, 3);
-        level.setBlock(aboveCenter.east(), torchOnGold, 3);
-        level.setBlock(aboveCenter.above(), Blocks.FIRE.defaultBlockState(), 3);
+        HerobrineGameLogic.placeTotemIfNeeded(event.getServer().overworld());
     }
 
     @SubscribeEvent
