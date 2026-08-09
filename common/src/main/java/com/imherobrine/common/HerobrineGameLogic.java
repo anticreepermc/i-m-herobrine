@@ -50,6 +50,40 @@ public final class HerobrineGameLogic {
         }
     }
 
+    public static void placeTotemIfNeeded(ServerLevel overworld) {
+        HerobrineWorldData data = HerobrineWorldData.get(overworld);
+        if (data.isTotemPlaced()) {
+            return;
+        }
+        BlockPos spawn = overworld.getSharedSpawnPos();
+        BlockPos surface = overworld.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, spawn);
+        placeTotem(overworld, surface);
+        data.setTotemPlaced();
+    }
+
+    private static void placeTotem(ServerLevel level, BlockPos ground) {
+        if (level.dimension() != Level.OVERWORLD) {
+            return;
+        }
+        for (int dz = -1; dz <= 1; dz++) {
+            for (int dx = -1; dx <= 1; dx++) {
+                BlockPos pos = ground.offset(dx, 0, dz);
+                BlockState state = dx == 0 && dz == 0
+                        ? Blocks.MOSSY_COBBLESTONE.defaultBlockState()
+                        : Blocks.GOLD_BLOCK.defaultBlockState();
+                level.setBlock(pos, state, 3);
+            }
+        }
+        BlockPos aboveCenter = ground.above();
+        level.setBlock(aboveCenter, Blocks.NETHERRACK.defaultBlockState(), 3);
+        BlockState torch = Blocks.REDSTONE_TORCH.defaultBlockState();
+        level.setBlock(aboveCenter.north(), torch, 3);
+        level.setBlock(aboveCenter.south(), torch, 3);
+        level.setBlock(aboveCenter.west(), torch, 3);
+        level.setBlock(aboveCenter.east(), torch, 3);
+        level.setBlock(aboveCenter.above(), Blocks.FIRE.defaultBlockState(), 3);
+    }
+
     private static void clearNearbyLeaves(ServerPlayer player) {
         ServerLevel level = (ServerLevel) player.level();
         BlockPos center = player.blockPosition();
