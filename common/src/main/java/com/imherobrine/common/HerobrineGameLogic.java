@@ -140,4 +140,5 @@ public final class HerobrineGameLogic {
         }
         player.onUpdateAbilities();
     }
+}
 
