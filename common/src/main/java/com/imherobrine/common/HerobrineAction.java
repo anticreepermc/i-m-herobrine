@@ -1,4 +1,4 @@
-﻿package com.imherobrine.common;
+package com.imherobrine.common;
 
 public enum HerobrineAction {
     LIGHTNING,

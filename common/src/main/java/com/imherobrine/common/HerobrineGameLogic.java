@@ -1,4 +1,5 @@
-﻿
+package com.imherobrine.common;
+
 import com.imherobrine.common.HerobrineAction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.BlockPos;
@@ -22,7 +23,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-package com.imherobrine.common;
 
 public final class HerobrineGameLogic {
     private static final ResourceLocation HEALTH_BOOST_ID = ResourceLocation.fromNamespaceAndPath("imherobrine", "extra_hp");
