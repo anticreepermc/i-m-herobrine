@@ -7,13 +7,14 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import com.mojang.blaze3d.platform.InputConstants;
 import org.lwjgl.glfw.GLFW;
 
-@Mod.EventBusSubscriber(modid = "imherobrine", bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = "imherobrine", bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public final class NeoForgeClient {
     private static final String CATEGORY = "key.categories.imherobrine";
     private static final KeyMapping LIGHTNING = key("lightning", GLFW.GLFW_KEY_H);
@@ -38,7 +39,7 @@ public final class NeoForgeClient {
         event.register(LEAVES);
     }
 
-    @Mod.EventBusSubscriber(modid = "imherobrine", value = Dist.CLIENT)
+    @EventBusSubscriber(modid = "imherobrine", value = Dist.CLIENT)
     public static final class TickHandler {
         private TickHandler() {
         }
