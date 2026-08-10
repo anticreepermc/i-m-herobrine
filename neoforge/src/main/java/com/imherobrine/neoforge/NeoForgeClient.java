@@ -14,6 +14,7 @@ import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import com.mojang.blaze3d.platform.InputConstants;
 import org.lwjgl.glfw.GLFW;
 
+@EventBusSubscriber(modid = "imherobrine", value = Dist.CLIENT)
 public final class NeoForgeClient {
     private static final String CATEGORY = "key.categories.imherobrine";
     private static final KeyMapping LIGHTNING = key("lightning", GLFW.GLFW_KEY_H);
