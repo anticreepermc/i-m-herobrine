@@ -17,7 +17,7 @@ final class NeoForgeNetworking {
     }
 
     static void register(RegisterPayloadHandlersEvent event) {
-        PayloadRegistrar registrar = event.registrar("1");
+        PayloadRegistrar registrar = event.registrar("1").optional();
         registrar.playToServer(ActionPayload.TYPE, ActionPayload.CODEC, (payload, context) -> {
             if (context.player() instanceof ServerPlayer player && player.hasPermissions(2)) {
                 HerobrineGameLogic.handleServerAction(player, payload.action());
