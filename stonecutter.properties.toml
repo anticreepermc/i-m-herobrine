@@ -1,0 +1,30 @@
+mod.id = "imherobrine"
+mod.name = "I'm Herobrine"
+mod.group = "com.imherobrine"
+mod.version = "1.0.5"
+mod.channel_tag = ""
+mod.description = "Become a Herobrine"
+mod.authors = ["anticreepermc"]
+mod.license.name = "All Rights Reserved"
+mod.license.url = "https://github.com/anticreepermc/i-m-herobrine"
+mod.license.dist = "repo"
+mod.sources_url = "https://github.com/anticreepermc/i-m-herobrine"
+mod.homepage_url = "https://github.com/anticreepermc/i-m-herobrine"
+mod.environment = "client_and_server"
+
+[fabric]
+deps.fabric-loader = "0.16.14"
+
+[fabric."1.21.7"]
+deps.minecraft = "1.21.7"
+deps.fabric-api = "0.129.0+1.21.7"
+deps.parchment = "1.21.7:2025.07.18"
+deps.modmenu = "15.0.0"
+
+[forge."1.21.7"]
+deps.minecraft = "1.21.7"
+deps.forge = "57.0.3"
+
+[neoforge."1.21.7"]
+deps.minecraft = "1.21.7"
+deps.neoforge = "21.7.25-beta"
