@@ -5,7 +5,7 @@ plugins {
 	alias(libs.plugins.neoforged.moddev).apply(false)
 	alias(libs.plugins.jsonlang.postprocess).apply(false)
 	alias(libs.plugins.fletching.table).apply(false)
-	alias(libs.plugins.legacyforge.moddev).apply(false)
+	alias(libs.plugins.forgegradle).apply(false)
 	id("mod-root")
 }
 

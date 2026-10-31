@@ -1,6 +1,6 @@
 plugins {
 	id("mod-platform")
-	id("net.neoforged.moddev.legacyforge") version "2.0.141"
+	alias(libs.plugins.forgegradle)
 }
 
 stonecutter {
@@ -25,37 +25,21 @@ platform {
 	}
 }
 
-legacyForge {
-	version = "${prop("deps.minecraft")}-${prop("deps.forge")}"
-
-	validateAccessTransformers = true
-
-	accessTransformers.from(
-		rootProject.file("src/main/resources/aw/${sc.current.version}.cfg")
-	)
-
+minecraft {
+	mappings("official", prop("deps.minecraft"))
+	accessTransformer = rootProject.file("src/main/resources/aw/${sc.current.version}.cfg")
 	val devJvmArgs = propsList("mod", "dev_jvm_args") +
 		propsList("mod", "dev_jvm_args_mixin_debug")
 	runs {
 		register("client") {
-			client()
-			gameDirectory = file("run/")
-			ideName = "Forge Client (${sc.current.version})"
-			programArgument("--username=Dev")
+			workingDir.convention(layout.projectDirectory.dir("run"))
+			args("--username=Dev")
 			jvmArguments.addAll(devJvmArgs)
 		}
 		register("server") {
-			server()
-			gameDirectory = file("run/")
-			ideName = "Forge Server (${sc.current.version})"
+			workingDir.convention(layout.projectDirectory.dir("run"))
+			args("--nogui")
 			jvmArguments.addAll(devJvmArgs)
-		}
-	}
-
-
-	mods {
-		register(prop("mod.id")) {
-			sourceSet(sourceSets["main"])
 		}
 	}
 }
@@ -66,12 +50,17 @@ mixin {
 }
 
 repositories {
+	minecraft.mavenizer(this)
+	maven(fg.forgeMaven)
+	maven(fg.minecraftLibsMaven)
 	mavenCentral()
-	maven("https://maven.minecraftforge.net/") { name = "MinecraftForge" }
+	mavenLocal()
 	strictMaven("https://api.modrinth.com/maven", "maven.modrinth") { name = "Modrinth" }
 }
 
 dependencies {
+	implementation(minecraft.dependency("net.minecraftforge:forge:${prop("deps.minecraft")}-${prop("deps.forge")}"))
+	annotationProcessor("net.minecraftforge:eventbus-validator:7.0.5")
 	annotationProcessor("org.spongepowered:mixin:${libs.versions.mixin.get()}:processor")
 
 	// implementation(libs.moulberry.mixinconstraints)
@@ -84,9 +73,5 @@ sourceSets {
 			"${rootDir}/versions/datagen/${sc.current.version.split("-")[0]}/src/main/generated"
 		)
 	}
-}
-
-tasks.named("createMinecraftArtifacts") {
-	dependsOn(tasks.named("stonecutterGenerate"))
 }
 

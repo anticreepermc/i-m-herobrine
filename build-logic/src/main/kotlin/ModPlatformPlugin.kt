@@ -45,7 +45,7 @@ abstract class ModPlatformPlugin @Inject constructor() : Plugin<Project> {
 			}
 
 			is Loader.Forge -> {
-				extension.jarTask.convention("reobfJar")
+				extension.jarTask.convention("jar")
 				extension.sourcesJarTask.convention("sourcesJar")
 			}
 

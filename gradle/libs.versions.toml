@@ -4,6 +4,7 @@ stonecutter-postprocess = "2.1-beta.8"
 mod-publish = "2.1.1"
 loomx = "0.4.1"
 neoforge-moddev = "2.0.141"
+forgegradle = "[7.0.29,8.0)"
 devtools-ksp = "2.2.10-2.0.2"
 kotlin-jvm = "2.2.10"
 fletching-table = "0.1.0-alpha.23"
@@ -33,4 +34,4 @@ mod-publish-plugin = { id = "me.modmuss50.mod-publish-plugin", version.ref = "mo
 devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "devtools-ksp" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin-jvm" }
 fletching-table = { id = "dev.kikugie.fletching-table", version.ref = "fletching-table" }
-legacyforge-moddev = { id = "net.neoforged.moddev.legacyforge", version.ref = "neoforge-moddev" }
+forgegradle = { id = "net.minecraftforge.gradle", version.ref = "forgegradle" }
