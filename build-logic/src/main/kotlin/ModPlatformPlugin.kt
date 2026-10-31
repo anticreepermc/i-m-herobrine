@@ -7,6 +7,7 @@ import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.provider.Property
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
@@ -102,7 +103,24 @@ abstract class ModPlatformPlugin @Inject constructor() : Plugin<Project> {
 	}
 
 	private fun Project.configureJava(ctx: Context) {
+		val stonecutterTask = tasks.named("stonecutterGenerate")
+		tasks.withType<JavaCompile>().configureEach {
+			dependsOn(stonecutterTask)
+		}
+		tasks.matching { it.name == "kspKotlin" }.configureEach {
+			dependsOn(stonecutterTask)
+		}
+
 		extensions.configure<JavaPluginExtension>("java") {
+		sourceSets.named("main") {
+			java.setSrcDirs(listOf(layout.buildDirectory.dir("generated/stonecutter/main/java")))
+			resources.setSrcDirs(
+				listOf(
+					layout.buildDirectory.dir("generated/stonecutter/main/resources"),
+					layout.buildDirectory.dir("generated/modManifest")
+				)
+			)
+		}
 			withSourcesJar()
 			withJavadocJar()
 			sourceCompatibility = ctx.javaVersion
@@ -142,7 +160,8 @@ abstract class ModPlatformPlugin @Inject constructor() : Plugin<Project> {
 		val javaVersionValue = "JAVA_${ctx.javaVersion.majorVersion}"
 		val excluded = ctx.loader.excludedResources
 		tasks.named<ProcessResources>("processResources") {
-			dependsOn(tasks.named("stonecutterGenerate"), "kspKotlin")
+			dependsOn(tasks.named("stonecutterGenerate"))
+			tasks.findByName("kspKotlin")?.let { dependsOn(it) }
 			filesMatching("*.mixins.json") {
 				expand("java" to javaVersionValue)
 			}

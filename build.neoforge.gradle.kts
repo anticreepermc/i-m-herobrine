@@ -1,6 +1,6 @@
 plugins {
 	id("mod-platform")
-	id("net.neoforged.moddev")
+	id("net.neoforged.moddev") version "2.0.141"
 }
 
 stonecutter {

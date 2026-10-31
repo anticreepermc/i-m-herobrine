@@ -39,18 +39,18 @@ loom {
 		propsList("mod", "dev_jvm_args_mixin_debug")
 	runs.named("client") {
 		client()
-		generateRunConfig.set(true)
-		runDirectory.set(layout.projectDirectory.dir("run"))
-		programArguments.add("--username=Dev")
-		jvmArguments.addAll(devJvmArgs)
-		displayName.set("Fabric Client")
+		ideConfigGenerated(true)
+		runDir = "run"
+		programArgs("--username=Dev")
+		vmArgs.addAll(devJvmArgs)
+		configName = "Fabric Client"
 	}
 	runs.named("server") {
 		server()
-		generateRunConfig.set(true)
-		runDirectory.set(layout.projectDirectory.dir("run"))
-		jvmArguments.addAll(devJvmArgs)
-		displayName.set("Fabric Server")
+		ideConfigGenerated(true)
+		runDir = "run"
+		vmArgs.addAll(devJvmArgs)
+		configName = "Fabric Server"
 	}
 }
 
@@ -63,6 +63,7 @@ fabricApi {
 
 repositories {
 	mavenCentral()
+	maven("https://maven.parchmentmc.org") { name = "ParchmentMC" }
 	strictMaven("https://maven.terraformersmc.com/", "com.terraformersmc") { name = "TerraformersMC" }
 	strictMaven("https://api.modrinth.com/maven", "maven.modrinth") { name = "Modrinth" }
 }

@@ -19,7 +19,7 @@ fun Project.prop(name: String): String = (project.sc.properties.get<String>(name
 
 fun Project.propsList(vararg segments: String): List<String> = runCatching {
 	sc.properties.raw(*segments).asList().map { it.toString() }
-}.getOrElse { error("Missing or malformed '${segments.joinToString(".")}' in stonecutter.properties.toml") }
+}.getOrDefault(emptyList())
 
 fun Project.env(variable: String): String? {
 	providers.environmentVariable(variable).orNull?.let { return it }

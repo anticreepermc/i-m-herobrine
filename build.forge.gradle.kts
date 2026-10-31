@@ -1,6 +1,6 @@
 plugins {
 	id("mod-platform")
-	id("net.neoforged.moddev.legacyforge")
+	id("net.neoforged.moddev.legacyforge") version "2.0.141"
 }
 
 stonecutter {
@@ -67,6 +67,7 @@ mixin {
 
 repositories {
 	mavenCentral()
+	maven("https://maven.minecraftforge.net/") { name = "MinecraftForge" }
 	strictMaven("https://api.modrinth.com/maven", "maven.modrinth") { name = "Modrinth" }
 }
 

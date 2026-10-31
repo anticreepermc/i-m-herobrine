@@ -32,6 +32,8 @@ dependencies {
 	implementation(libs.kikugie.loomx)
 	implementation(libs.mod.publish.plugin)
 	implementation(libs.fletching.table)
+	implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${libs.versions.kotlin.jvm.get()}")
+	implementation("com.google.devtools.ksp:symbol-processing-gradle-plugin:${libs.versions.devtools.ksp.get()}")
 	implementation(libs.vanniktech.maven.publish)
 	implementation(libs.serialization.json)
 	implementation(libs.serialization.toml)
