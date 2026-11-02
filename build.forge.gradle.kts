@@ -27,26 +27,20 @@ platform {
 
 minecraft {
 	mappings("official", prop("deps.minecraft"))
-	accessTransformer = rootProject.file("src/main/resources/aw/${sc.current.version}.cfg")
-	val devJvmArgs = propsList("mod", "dev_jvm_args") +
-		propsList("mod", "dev_jvm_args_mixin_debug")
+	accessTransformers = files(rootProject.file("src/main/resources/aw/${sc.current.version}.cfg"))
 	runs {
+		configureEach {
+			args("--mixin.config=${prop("mod.id")}.mixins.json")
+		}
 		register("client") {
 			workingDir.convention(layout.projectDirectory.dir("run"))
 			args("--username=Dev")
-			jvmArguments.addAll(devJvmArgs)
 		}
 		register("server") {
 			workingDir.convention(layout.projectDirectory.dir("run"))
 			args("--nogui")
-			jvmArguments.addAll(devJvmArgs)
 		}
 	}
-}
-
-mixin {
-	add(sourceSets.main.get(), "${prop("mod.id")}.mixins.refmap.json")
-	config("${prop("mod.id")}.mixins.json")
 }
 
 repositories {
