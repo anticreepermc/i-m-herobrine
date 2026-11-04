@@ -61,7 +61,7 @@ public final class NeoForgeClient {
 
         private static void send(KeyMapping key, HerobrineAction action) {
             if (key.consumeClick()) {
-                net.neoforged.neoforge.network.PacketDistributor.sendToServer(
+                net.neoforged.neoforge.client.network.ClientPacketDistributor.sendToServer(
                         new NeoForgeNetworking.ActionPayload(action));
             }
         }
