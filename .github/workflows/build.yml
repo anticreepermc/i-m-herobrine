@@ -52,7 +52,7 @@ jobs:
           set -euo pipefail
           version=$(grep '^mod.version' stonecutter.properties.toml | cut -d'"' -f2)
           mkdir -p "artifacts/${{ matrix.loader }}"
-          jar=$(find "${{ matrix.minecraft }}-${{ matrix.project_loader }}/build/libs" -maxdepth 1 -type f -name '*.jar' ! -name '*-sources.jar' ! -name '*-javadoc.jar' | head -n 1)
+          jar=$(find "versions/${{ matrix.minecraft }}-${{ matrix.project_loader }}/build/libs" -maxdepth 1 -type f -name '*.jar' ! -name '*-sources.jar' ! -name '*-javadoc.jar' | head -n 1)
           test -n "$jar"
           if [ "${{ matrix.loader }}" = "quilt" ]; then
             cp "$jar" "artifacts/quilt/imherobrine-${version}-mc${{ matrix.minecraft }}-quilt.jar"

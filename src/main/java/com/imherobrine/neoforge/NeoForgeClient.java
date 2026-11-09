@@ -2,6 +2,7 @@
 package com.imherobrine.neoforge;
 
 import com.imherobrine.common.HerobrineAction;
+import com.imherobrine.client.HerobrineMenuScreen;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -23,6 +24,9 @@ public final class NeoForgeClient {
     private static final KeyMapping CLEAR = key("clear", GLFW.GLFW_KEY_V);
     private static final KeyMapping FLY = key("toggle_fly", GLFW.GLFW_KEY_F);
     private static final KeyMapping LEAVES = key("clear_leaves", GLFW.GLFW_KEY_C);
+    private static final KeyMapping TREE_TORCHES = key("tree_torches", GLFW.GLFW_KEY_T);
+    private static final KeyMapping TELEPORT_TO_AIM = key("teleport_to_aim", GLFW.GLFW_KEY_P);
+    private static final KeyMapping MENU = key("menu", GLFW.GLFW_KEY_M);
 
     private NeoForgeClient() {
     }
@@ -38,6 +42,9 @@ public final class NeoForgeClient {
         event.register(CLEAR);
         event.register(FLY);
         event.register(LEAVES);
+        event.register(TREE_TORCHES);
+        event.register(TELEPORT_TO_AIM);
+        event.register(MENU);
     }
 
     @EventBusSubscriber(modid = "imherobrine", value = Dist.CLIENT)
@@ -57,11 +64,17 @@ public final class NeoForgeClient {
             send(CLEAR, HerobrineAction.CLEAR_BUFFS);
             send(FLY, HerobrineAction.TOGGLE_FLY);
             send(LEAVES, HerobrineAction.CLEAR_NEARBY_LEAVES);
+            send(TREE_TORCHES, HerobrineAction.PLACE_TREE_TORCHES);
+            send(TELEPORT_TO_AIM, HerobrineAction.TELEPORT_TO_AIM);
+            if (MENU.consumeClick()) {
+                minecraft.setScreen(new HerobrineMenuScreen(action -> net.neoforged.neoforge.client.network.ClientPacketDistributor.sendToServer(
+                        new NeoForgeNetworking.ActionPayload(action))));
+            }
         }
 
         private static void send(KeyMapping key, HerobrineAction action) {
             if (key.consumeClick()) {
-                net.neoforged.neoforge.network.PacketDistributor.sendToServer(
+                net.neoforged.neoforge.client.network.ClientPacketDistributor.sendToServer(
                         new NeoForgeNetworking.ActionPayload(action));
             }
         }

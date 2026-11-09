@@ -4,6 +4,9 @@
   "key.imherobrine.buffs": "Apply Herobrine buffs",
   "key.imherobrine.clear": "Clear effects",
   "key.imherobrine.toggle_fly": "Toggle survival fly mode",
-  "key.imherobrine.clear_leaves": "Clear nearby leaves (30 blocks)"
+  "key.imherobrine.clear_leaves": "Clear nearby leaves",
+  "key.imherobrine.tree_torches": "Place redstone torches around trees",
+  "key.imherobrine.teleport_to_aim": "Teleport to crosshair target",
+  "key.imherobrine.menu": "Open Herobrine menu"
 }
 

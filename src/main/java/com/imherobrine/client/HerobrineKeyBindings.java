@@ -52,6 +52,30 @@ public final class HerobrineKeyBindings {
             CATEGORY
     );
 
+    public static final KeyMapping TREE_TORCHES = new KeyMapping(
+            "key." + ImHerobrineMod.MODID + ".tree_torches",
+            KeyConflictContext.IN_GAME,
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_T,
+            CATEGORY
+    );
+
+    public static final KeyMapping TELEPORT_TO_AIM = new KeyMapping(
+            "key." + ImHerobrineMod.MODID + ".teleport_to_aim",
+            KeyConflictContext.IN_GAME,
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_P,
+            CATEGORY
+    );
+
+    public static final KeyMapping MENU = new KeyMapping(
+            "key." + ImHerobrineMod.MODID + ".menu",
+            KeyConflictContext.IN_GAME,
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_M,
+            CATEGORY
+    );
+
     private HerobrineKeyBindings() {
     }
 }

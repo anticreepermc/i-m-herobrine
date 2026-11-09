@@ -20,9 +20,7 @@ final class FabricNetworking {
     static void register() {
         PayloadTypeRegistry.playC2S().register(ActionPayload.TYPE, ActionPayload.CODEC);
         ServerPlayNetworking.registerGlobalReceiver(ActionPayload.TYPE, (payload, context) -> {
-            if (context.player().hasPermissions(2)) {
-                HerobrineGameLogic.handleServerAction(context.player(), payload.action());
-            }
+            HerobrineGameLogic.handleServerAction(context.player(), payload.action());
         });
     }
 

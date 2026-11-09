@@ -3,7 +3,7 @@ package com.imherobrine.client;
 
 import com.imherobrine.ImHerobrineMod;
 import com.imherobrine.network.C2SHerobrineActionPacket;
-import com.imherobrine.network.C2SHerobrineActionPacket.Action;
+import com.imherobrine.common.HerobrineAction;
 import com.imherobrine.network.HerobrineNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
@@ -24,6 +24,9 @@ public final class ClientModEvents {
         event.register(HerobrineKeyBindings.CLEAR);
         event.register(HerobrineKeyBindings.TOGGLE_FLY);
         event.register(HerobrineKeyBindings.CLEAR_LEAVES);
+        event.register(HerobrineKeyBindings.TREE_TORCHES);
+        event.register(HerobrineKeyBindings.TELEPORT_TO_AIM);
+        event.register(HerobrineKeyBindings.MENU);
     }
 }
 
@@ -42,19 +45,28 @@ final class ClientTickHandler {
             return;
         }
         if (HerobrineKeyBindings.LIGHTNING.consumeClick()) {
-            HerobrineNetworking.sendToServer(new C2SHerobrineActionPacket(Action.LIGHTNING));
+            HerobrineNetworking.sendToServer(new C2SHerobrineActionPacket(HerobrineAction.LIGHTNING));
         }
         if (HerobrineKeyBindings.BUFFS.consumeClick()) {
-            HerobrineNetworking.sendToServer(new C2SHerobrineActionPacket(Action.APPLY_BUFFS));
+            HerobrineNetworking.sendToServer(new C2SHerobrineActionPacket(HerobrineAction.APPLY_BUFFS));
         }
         if (HerobrineKeyBindings.CLEAR.consumeClick()) {
-            HerobrineNetworking.sendToServer(new C2SHerobrineActionPacket(Action.CLEAR_BUFFS));
+            HerobrineNetworking.sendToServer(new C2SHerobrineActionPacket(HerobrineAction.CLEAR_BUFFS));
         }
         if (HerobrineKeyBindings.TOGGLE_FLY.consumeClick()) {
-            HerobrineNetworking.sendToServer(new C2SHerobrineActionPacket(Action.TOGGLE_FLY));
+            HerobrineNetworking.sendToServer(new C2SHerobrineActionPacket(HerobrineAction.TOGGLE_FLY));
         }
         if (HerobrineKeyBindings.CLEAR_LEAVES.consumeClick()) {
-            HerobrineNetworking.sendToServer(new C2SHerobrineActionPacket(Action.CLEAR_NEARBY_LEAVES));
+            HerobrineNetworking.sendToServer(new C2SHerobrineActionPacket(HerobrineAction.CLEAR_NEARBY_LEAVES));
+        }
+        if (HerobrineKeyBindings.TREE_TORCHES.consumeClick()) {
+            HerobrineNetworking.sendToServer(new C2SHerobrineActionPacket(HerobrineAction.PLACE_TREE_TORCHES));
+        }
+        if (HerobrineKeyBindings.TELEPORT_TO_AIM.consumeClick()) {
+            HerobrineNetworking.sendToServer(new C2SHerobrineActionPacket(HerobrineAction.TELEPORT_TO_AIM));
+        }
+        if (HerobrineKeyBindings.MENU.consumeClick()) {
+            mc.setScreen(new HerobrineMenuScreen(action -> HerobrineNetworking.sendToServer(new C2SHerobrineActionPacket(action))));
         }
     }
 }
