@@ -255,9 +255,9 @@ public final class HerobrineGameLogic {
         double averageZ = roots.stream().mapToInt(BlockPos::getZ).average().orElse(0);
         for (Direction side : Direction.Plane.HORIZONTAL) {
             Comparator<BlockPos> edgeComparator = switch (side) {
-                case NORTH -> Comparator.comparingInt(BlockPos::getZ).thenComparingDouble(pos -> Math.abs(pos.getX() - averageX));
+                case NORTH -> Comparator.<BlockPos>comparingInt(BlockPos::getZ).thenComparingDouble(pos -> Math.abs(pos.getX() - averageX));
                 case SOUTH -> Comparator.<BlockPos>comparingInt(BlockPos::getZ).reversed().thenComparingDouble(pos -> Math.abs(pos.getX() - averageX));
-                case WEST -> Comparator.comparingInt(BlockPos::getX).thenComparingDouble(pos -> Math.abs(pos.getZ() - averageZ));
+                case WEST -> Comparator.<BlockPos>comparingInt(BlockPos::getX).thenComparingDouble(pos -> Math.abs(pos.getZ() - averageZ));
                 case EAST -> Comparator.<BlockPos>comparingInt(BlockPos::getX).reversed().thenComparingDouble(pos -> Math.abs(pos.getZ() - averageZ));
                 default -> throw new IllegalStateException("Unexpected direction: " + side);
             };
