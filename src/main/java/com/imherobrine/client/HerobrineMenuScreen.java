@@ -82,7 +82,6 @@ public final class HerobrineMenuScreen extends Screen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-        renderBackground(graphics, mouseX, mouseY, partialTick);
         int center = width / 2;
         int top = height / 2 - 92;
         graphics.drawCenteredString(font, title, center, top - 20, 0xFFFFFF);
