@@ -346,7 +346,10 @@ public final class HerobrineGameLogic {
         switch (LIGHTNING_MODES.getOrDefault(player.getUUID(), HerobrineLightningMode.SINGLE)) {
             case SINGLE -> addLightning(level, pos);
             case BURST -> {
-                for (int i = 0; i < 3; i++) addLightning(level, pos.add((i - 1) * 2.0D, 0, (i % 2) * 2.0D));
+                Vec3 right = new Vec3(-player.getLookAngle().z, 0, player.getLookAngle().x).normalize();
+                addLightning(level, pos.add(right.scale(-6)));
+                addLightning(level, pos);
+                addLightning(level, pos.add(right.scale(6)));
             }
             case CHAIN -> {
                 addLightning(level, pos);
@@ -358,13 +361,13 @@ public final class HerobrineGameLogic {
             case RING -> {
                 for (int i = 0; i < 8; i++) {
                     double angle = Math.PI * 2 * i / 8;
-                    addLightning(level, pos.add(Math.cos(angle) * 4, 0, Math.sin(angle) * 4));
+                    addLightning(level, pos.add(Math.cos(angle) * 8, 0, Math.sin(angle) * 8));
                 }
             }
             case STORM -> {
                 for (int i = 0; i < 8; i++) {
                     double angle = Math.random() * Math.PI * 2;
-                    double radius = Math.random() * 8;
+                    double radius = 5 + Math.random() * 14;
                     addLightning(level, pos.add(Math.cos(angle) * radius, 0, Math.sin(angle) * radius));
                 }
             }

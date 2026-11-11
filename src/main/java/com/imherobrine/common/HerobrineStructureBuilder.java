@@ -114,26 +114,12 @@ public final class HerobrineStructureBuilder {
     }
 
     private static int pixelText(ServerLevel level, BlockPos origin, String text, int rotation) {
-        String[][] glyphs = {
-                {"11111", "10000", "11110", "10000", "10000", "10000", "10000"},
-                {"11111", "10000", "10000", "11110", "10000", "10000", "11111"},
-                {"11110", "10001", "10001", "11110", "10100", "10010", "10001"},
-                {"01110", "10001", "10001", "10001", "10001", "10001", "01110"},
-                {"11110", "10001", "10001", "11110", "10100", "10010", "10001"},
-                {"11111", "00100", "00100", "00100", "00100", "00100", "00100"},
-                {"10001", "11001", "10101", "10101", "10011", "10001", "10001"},
-                {"01111", "10000", "10000", "01110", "00001", "00001", "11110"},
-                {"11111", "00100", "00100", "00100", "00100", "00100", "00100"},
-                {"11111", "10000", "10000", "11110", "10000", "10000", "10000"}
-        };
-        String alphabet = "HEROBINSTP";
         BlockState block = Blocks.GLOWSTONE.defaultBlockState();
         int count = 0;
         int offset = 0;
         for (char ch : text.toUpperCase().toCharArray()) {
-            int glyph = alphabet.indexOf(ch);
-            if (glyph < 0) { offset += 6; continue; }
-            String[] rows = glyphs[glyph];
+            String[] rows = glyph(ch);
+            if (rows == null) { offset += 6; continue; }
             for (int y = 0; y < rows.length; y++) {
                 for (int x = 0; x < rows[y].length(); x++) {
                     if (rows[y].charAt(x) != '1') continue;
@@ -145,6 +131,22 @@ public final class HerobrineStructureBuilder {
             if (offset > 100) break;
         }
         return count;
+    }
+
+    public static String[] glyph(char character) {
+        return switch (Character.toUpperCase(character)) {
+            case 'H' -> new String[]{"10001", "10001", "10001", "11111", "10001", "10001", "10001"};
+            case 'E' -> new String[]{"11111", "10000", "10000", "11110", "10000", "10000", "11111"};
+            case 'R' -> new String[]{"11110", "10001", "10001", "11110", "10100", "10010", "10001"};
+            case 'O' -> new String[]{"01110", "10001", "10001", "10001", "10001", "10001", "01110"};
+            case 'B' -> new String[]{"11110", "10001", "10001", "11110", "10001", "10001", "11110"};
+            case 'I' -> new String[]{"11111", "00100", "00100", "00100", "00100", "00100", "11111"};
+            case 'N' -> new String[]{"10001", "11001", "11001", "10101", "10011", "10011", "10001"};
+            case 'S' -> new String[]{"01111", "10000", "10000", "01110", "00001", "00001", "11110"};
+            case 'T' -> new String[]{"11111", "00100", "00100", "00100", "00100", "00100", "00100"};
+            case 'P' -> new String[]{"11110", "10001", "10001", "11110", "10000", "10000", "10000"};
+            default -> null;
+        };
     }
 
     private static int tunnel(ServerLevel level, BlockPos origin, int rotation) {
