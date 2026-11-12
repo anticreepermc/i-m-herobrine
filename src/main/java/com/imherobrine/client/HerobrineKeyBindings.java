@@ -56,7 +56,7 @@ public final class HerobrineKeyBindings {
             "key." + ImHerobrineMod.MODID + ".tree_torches",
             KeyConflictContext.IN_GAME,
             InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_T,
+            GLFW.GLFW_KEY_B,
             CATEGORY
     );
 
@@ -64,7 +64,7 @@ public final class HerobrineKeyBindings {
             "key." + ImHerobrineMod.MODID + ".teleport_to_aim",
             KeyConflictContext.IN_GAME,
             InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_P,
+            GLFW.GLFW_KEY_N,
             CATEGORY
     );
 

@@ -162,15 +162,15 @@ public final class HerobrineStructureBuilder {
             }
             BlockPos rail = rotate(origin, length, 0, 0, rotation);
             if (level.getBlockState(rail).isAir() && put(level, rail, Blocks.REDSTONE_WIRE.defaultBlockState())) count++;
-            if (length % 4 == 0) {
-                BlockPos torchPos = rotate(origin, length, 0, -2, rotation);
-                Direction outward = switch (Math.floorMod(rotation, 4)) {
-                    case 1 -> Direction.EAST;
-                    case 2 -> Direction.SOUTH;
-                    case 3 -> Direction.WEST;
-                    default -> Direction.NORTH;
+            if (length % 4 == 1) {
+                BlockPos torchPos = rotate(origin, length, 1, 0, rotation);
+                Direction inward = switch (Math.floorMod(rotation, 4)) {
+                    case 1 -> Direction.SOUTH;
+                    case 2 -> Direction.WEST;
+                    case 3 -> Direction.NORTH;
+                    default -> Direction.EAST;
                 };
-                BlockState torch = Blocks.REDSTONE_WALL_TORCH.defaultBlockState().setValue(net.minecraft.world.level.block.RedstoneWallTorchBlock.FACING, outward);
+                BlockState torch = Blocks.REDSTONE_WALL_TORCH.defaultBlockState().setValue(net.minecraft.world.level.block.RedstoneWallTorchBlock.FACING, inward);
                 if (torch.canSurvive(level, torchPos) && put(level, torchPos, torch)) count++;
             }
         }

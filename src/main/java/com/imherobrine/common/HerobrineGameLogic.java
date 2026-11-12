@@ -69,6 +69,8 @@ public final class HerobrineGameLogic {
             case SET_LIGHTNING_CHAIN -> LIGHTNING_MODES.put(player.getUUID(), HerobrineLightningMode.CHAIN);
             case SET_LIGHTNING_RING -> LIGHTNING_MODES.put(player.getUUID(), HerobrineLightningMode.RING);
             case SET_LIGHTNING_STORM -> LIGHTNING_MODES.put(player.getUUID(), HerobrineLightningMode.STORM);
+            case SET_LIGHTNING_NON_PLAYERS -> LIGHTNING_MODES.put(player.getUUID(), HerobrineLightningMode.NON_PLAYERS);
+            case SET_LIGHTNING_ALL_PLAYERS -> LIGHTNING_MODES.put(player.getUUID(), HerobrineLightningMode.ALL_PLAYERS);
             case BUILD_STRUCTURE -> { }
             case SELECT_SAND_PYRAMID_SMALL -> selectStructure(player, HerobrineStructureType.SAND_PYRAMID_SMALL);
             case SELECT_SAND_PYRAMID_MEDIUM -> selectStructure(player, HerobrineStructureType.SAND_PYRAMID_MEDIUM);
@@ -344,37 +346,53 @@ public final class HerobrineGameLogic {
             pos = player.getEyePosition().add(player.getLookAngle().scale(32.0D));
         }
         switch (LIGHTNING_MODES.getOrDefault(player.getUUID(), HerobrineLightningMode.SINGLE)) {
-            case SINGLE -> addLightning(level, pos);
+            case SINGLE -> addLightning(player, pos);
             case BURST -> {
                 Vec3 right = new Vec3(-player.getLookAngle().z, 0, player.getLookAngle().x).normalize();
-                addLightning(level, pos.add(right.scale(-6)));
-                addLightning(level, pos);
-                addLightning(level, pos.add(right.scale(6)));
+                addLightning(player, pos.add(right.scale(-6)));
+                addLightning(player, pos);
+                addLightning(player, pos.add(right.scale(6)));
             }
             case CHAIN -> {
-                addLightning(level, pos);
+                addLightning(player, pos);
                 level.getEntitiesOfClass(net.minecraft.world.entity.LivingEntity.class,
                         new AABB(pos, pos).inflate(16), entity -> entity != player && !entity.isSpectator()).stream()
                         .sorted(Comparator.comparingDouble(entity -> entity.distanceToSqr(pos)))
-                        .limit(4).forEach(entity -> addLightning(level, entity.position()));
+                        .limit(4).forEach(entity -> addLightning(player, entity.position()));
             }
             case RING -> {
                 for (int i = 0; i < 8; i++) {
                     double angle = Math.PI * 2 * i / 8;
-                    addLightning(level, pos.add(Math.cos(angle) * 8, 0, Math.sin(angle) * 8));
+                    addLightning(player, pos.add(Math.cos(angle) * 8, 0, Math.sin(angle) * 8));
                 }
             }
             case STORM -> {
                 for (int i = 0; i < 8; i++) {
                     double angle = Math.random() * Math.PI * 2;
                     double radius = 5 + Math.random() * 14;
-                    addLightning(level, pos.add(Math.cos(angle) * radius, 0, Math.sin(angle) * radius));
+                    addLightning(player, pos.add(Math.cos(angle) * radius, 0, Math.sin(angle) * radius));
                 }
             }
+            case NON_PLAYERS -> level.getEntitiesOfClass(net.minecraft.world.entity.LivingEntity.class,
+                    new AABB(pos, pos).inflate(32), entity -> !(entity instanceof net.minecraft.world.entity.player.Player)
+                            && entity.isAlive() && !entity.isSpectator())
+                    .forEach(entity -> addLightning(player, entity.position()));
+            case ALL_PLAYERS -> level.players().stream()
+                    .filter(target -> target != player && target.distanceToSqr(pos.x, pos.y, pos.z) <= 32.0D * 32.0D && !target.isSpectator())
+                    .forEach(target -> addLightning(player, target.position()));
         }
     }
 
-    private static void addLightning(ServerLevel level, Vec3 pos) {
+    private static void addLightning(ServerPlayer caster, Vec3 pos) {
+        ServerLevel level = (ServerLevel) caster.level();
+        Vec3 casterPos = caster.position();
+        Vec3 away = pos.subtract(casterPos);
+        if (away.lengthSqr() < 25.0D) {
+            Vec3 direction = away.lengthSqr() < 1.0E-6D
+                    ? new Vec3(-caster.getLookAngle().x, 0, -caster.getLookAngle().z).normalize()
+                    : away.normalize();
+            pos = casterPos.add(direction.scale(5.0D));
+        }
         var bolt = EntityType.LIGHTNING_BOLT.create(level, EntitySpawnReason.TRIGGERED);
         if (bolt != null) {
             bolt.setPos(pos.x, pos.y, pos.z);

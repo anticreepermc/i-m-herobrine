@@ -5,5 +5,7 @@ public enum HerobrineLightningMode {
     BURST,
     CHAIN,
     RING,
-    STORM
+    STORM,
+    NON_PLAYERS,
+    ALL_PLAYERS
 }

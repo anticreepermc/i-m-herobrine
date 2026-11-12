@@ -39,8 +39,10 @@ public final class HerobrineMenuScreen extends Screen {
             addAction(center, top + 76, "Chain", HerobrineAction.SET_LIGHTNING_CHAIN);
             addAction(center, top + 99, "Ring", HerobrineAction.SET_LIGHTNING_RING);
             addAction(center, top + 122, "Storm", HerobrineAction.SET_LIGHTNING_STORM);
-            addRenderableWidget(Button.builder(Component.literal("Strike target now"), button -> send(HerobrineAction.LIGHTNING))
-                    .bounds(center - 100, top + 151, 200, 20).build());
+            addAction(center, top + 145, "All mobs, no players", HerobrineAction.SET_LIGHTNING_NON_PLAYERS);
+            addAction(center, top + 168, "All players", HerobrineAction.SET_LIGHTNING_ALL_PLAYERS);
+            addRenderableWidget(Button.builder(Component.literal("Strike with selected mode"), button -> send(HerobrineAction.LIGHTNING))
+                    .bounds(center - 100, top + 192, 200, 20).build());
         } else {
             HerobrineStructureType[] types = HerobrineStructureType.values();
             selectedIndex = Math.floorMod(selectedIndex, types.length);

@@ -24,8 +24,8 @@ public final class NeoForgeClient {
     private static final KeyMapping CLEAR = key("clear", GLFW.GLFW_KEY_V);
     private static final KeyMapping FLY = key("toggle_fly", GLFW.GLFW_KEY_F);
     private static final KeyMapping LEAVES = key("clear_leaves", GLFW.GLFW_KEY_C);
-    private static final KeyMapping TREE_TORCHES = key("tree_torches", GLFW.GLFW_KEY_T);
-    private static final KeyMapping TELEPORT_TO_AIM = key("teleport_to_aim", GLFW.GLFW_KEY_P);
+    private static final KeyMapping TREE_TORCHES = key("tree_torches", GLFW.GLFW_KEY_B);
+    private static final KeyMapping TELEPORT_TO_AIM = key("teleport_to_aim", GLFW.GLFW_KEY_N);
     private static final KeyMapping MENU = key("menu", GLFW.GLFW_KEY_M);
 
     private NeoForgeClient() {
