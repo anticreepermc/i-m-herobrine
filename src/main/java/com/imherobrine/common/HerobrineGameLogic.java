@@ -46,6 +46,7 @@ public final class HerobrineGameLogic {
     private static final double TELEPORT_RANGE = 70.0D;
     private static final Map<UUID, Boolean> SURVIVAL_FLY = new HashMap<>();
     private static final Map<UUID, HerobrineLightningMode> LIGHTNING_MODES = new HashMap<>();
+    private static final Map<UUID, Long> LIGHTNING_COOLDOWNS = new HashMap<>();
     private static final Map<UUID, HerobrineStructureType> STRUCTURES = new HashMap<>();
     private static final Map<UUID, Integer> STRUCTURE_ROTATIONS = new HashMap<>();
 
@@ -253,21 +254,21 @@ public final class HerobrineGameLogic {
     }
 
     private static void placeTorchesAroundRootGroup(ServerLevel level, BlockPos center, int radiusSq, List<BlockPos> roots) {
-        double averageX = roots.stream().mapToInt(BlockPos::getX).average().orElse(0);
-        double averageZ = roots.stream().mapToInt(BlockPos::getZ).average().orElse(0);
+        BlockPos trunk = roots.stream().min(Comparator.comparingDouble(root -> root.distSqr(center))).orElseThrow();
+        int topY = trunk.getY();
+        for (int dy = 1; dy <= 32; dy++) {
+            BlockPos above = trunk.above(dy);
+            if (!level.hasChunkAt(above) || !level.getBlockState(above).is(BlockTags.LOGS)) break;
+            topY = above.getY();
+        }
+        int torchY = Math.min(trunk.getY() + 2, topY);
         for (Direction side : Direction.Plane.HORIZONTAL) {
-            Comparator<BlockPos> edgeComparator = switch (side) {
-                case NORTH -> Comparator.<BlockPos>comparingInt(BlockPos::getZ).thenComparingDouble(pos -> Math.abs(pos.getX() - averageX));
-                case SOUTH -> Comparator.<BlockPos>comparingInt(BlockPos::getZ).reversed().thenComparingDouble(pos -> Math.abs(pos.getX() - averageX));
-                case WEST -> Comparator.<BlockPos>comparingInt(BlockPos::getX).thenComparingDouble(pos -> Math.abs(pos.getZ() - averageZ));
-                case EAST -> Comparator.<BlockPos>comparingInt(BlockPos::getX).reversed().thenComparingDouble(pos -> Math.abs(pos.getZ() - averageZ));
-                default -> throw new IllegalStateException("Unexpected direction: " + side);
-            };
-            BlockPos torchPos = roots.stream().min(edgeComparator).orElseThrow().relative(side);
+            BlockPos support = new BlockPos(trunk.getX(), torchY, trunk.getZ());
+            BlockPos torchPos = support.relative(side);
             if (torchPos.distSqr(center) > radiusSq || !level.hasChunkAt(torchPos) || !level.getBlockState(torchPos).isAir()) {
                 continue;
             }
-            var torchState = Blocks.REDSTONE_WALL_TORCH.defaultBlockState().setValue(RedstoneWallTorchBlock.FACING, side);
+            var torchState = Blocks.REDSTONE_WALL_TORCH.defaultBlockState().setValue(RedstoneWallTorchBlock.FACING, side.getOpposite());
             if (torchState.canSurvive(level, torchPos)) {
                 level.setBlock(torchPos, torchState, 3);
             }
@@ -336,6 +337,9 @@ public final class HerobrineGameLogic {
 
     private static void spawnLightning(ServerPlayer player) {
         ServerLevel level = (ServerLevel) player.level();
+        long now = level.getGameTime();
+        if (now < LIGHTNING_COOLDOWNS.getOrDefault(player.getUUID(), 0L)) return;
+        LIGHTNING_COOLDOWNS.put(player.getUUID(), now + 10L);
         HitResult hit = player.pick(128.0D, 0.0F, false);
         Vec3 pos;
         if (hit.getType() == HitResult.Type.BLOCK) {
@@ -354,11 +358,13 @@ public final class HerobrineGameLogic {
                 addLightning(player, pos.add(right.scale(6)));
             }
             case CHAIN -> {
-                addLightning(player, pos);
-                level.getEntitiesOfClass(net.minecraft.world.entity.LivingEntity.class,
-                        new AABB(pos, pos).inflate(16), entity -> entity != player && !entity.isSpectator()).stream()
-                        .sorted(Comparator.comparingDouble(entity -> entity.distanceToSqr(pos)))
-                        .limit(4).forEach(entity -> addLightning(player, entity.position()));
+                List<net.minecraft.world.entity.LivingEntity> targets = level.getEntitiesOfClass(net.minecraft.world.entity.LivingEntity.class,
+                        new AABB(pos, pos).inflate(24), entity -> entity != player && entity.isAlive() && !entity.isSpectator()).stream()
+                        .sorted(Comparator.comparingDouble(entity -> entity.distanceToSqr(pos))).limit(5).toList();
+                if (targets.isEmpty()) {
+                    Vec3 axis = new Vec3(-player.getLookAngle().z, 0, player.getLookAngle().x).normalize();
+                    for (int i = -2; i <= 2; i++) addLightning(player, pos.add(axis.scale(i * 5.0D)));
+                } else targets.forEach(target -> addLightning(player, target.position()));
             }
             case RING -> {
                 for (int i = 0; i < 8; i++) {

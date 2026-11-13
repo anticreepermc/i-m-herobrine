@@ -99,10 +99,27 @@ public final class HerobrineMenuScreen extends Screen {
     }
 
     private void drawPreview(GuiGraphics graphics, int center, int y, HerobrineStructureType type) {
+        if (type == HerobrineStructureType.MINE_TUNNEL) {
+            graphics.drawCenteredString(font, "Tunnel cross-section · redstone torches on inner walls", center, y - 8, 0xB0B0B0);
+            int cell = 12;
+            int left = center - 4 * cell;
+            int top = y + 10;
+            for (int row = 0; row < 4; row++) {
+                for (int col = 0; col < 9; col++) {
+                    boolean wall = row == 0 || row == 3 || col == 0 || col == 8;
+                    int color = wall ? 0xFF777777 : row == 2 ? 0xFF6B4930 : 0xFF242424;
+                    graphics.fill(left + col * cell, top + row * cell, left + (col + 1) * cell - 1, top + (row + 1) * cell - 1, color);
+                }
+            }
+            graphics.fill(left + 2 * cell, top + cell, left + 2 * cell + cell - 2, top + 2 * cell - 2, 0xFFFF3333);
+            graphics.fill(left + 6 * cell, top + cell, left + 6 * cell + cell - 2, top + 2 * cell - 2, 0xFFFF3333);
+            graphics.drawCenteredString(font, "████████████████", center, top + 4 * cell + 5, 0xFFAAAAAA);
+            return;
+        }
         String pattern = switch (type) {
             case SAND_PYRAMID_SMALL, SAND_PYRAMID_MEDIUM, SAND_PYRAMID_LARGE,
                     COBBLE_PYRAMID_SMALL, COBBLE_PYRAMID_MEDIUM, COBBLE_PYRAMID_LARGE -> "    █    /   ███   /  █████  / ███████ /█████████";
-            case MINE_TUNNEL -> "████████ /█  ··  █ /█  ··  █ /████████";
+            case MINE_TUNNEL -> "";
             case CREEPY_SIGNS -> "[I SEE YOU]  [DO NOT TURN]  [HE IS HERE]";
             case HEROBRINE_TOTEM -> "  F  /  █  /███";
             case WORD_STOP -> "██████  █████  ███████  █████";
