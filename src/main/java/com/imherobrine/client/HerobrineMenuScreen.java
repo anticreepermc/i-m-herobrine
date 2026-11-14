@@ -84,6 +84,7 @@ public final class HerobrineMenuScreen extends Screen {
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        super.render(graphics, mouseX, mouseY, partialTick);
         int center = width / 2;
         int top = height / 2 - 92;
         graphics.drawCenteredString(font, title, center, top - 20, 0xFFFFFF);
@@ -95,7 +96,6 @@ public final class HerobrineMenuScreen extends Screen {
         } else {
             graphics.drawCenteredString(font, "Choose a lightning pattern, then use H to strike", center, top + 145, 0xB0B0B0);
         }
-        super.render(graphics, mouseX, mouseY, partialTick);
     }
 
     private void drawPreview(GuiGraphics graphics, int center, int y, HerobrineStructureType type) {
