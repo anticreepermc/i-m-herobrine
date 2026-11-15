@@ -1,6 +1,8 @@
 package com.imherobrine.client;
 
 import com.imherobrine.common.HerobrineAction;
+import com.imherobrine.common.HerobrineClientConfig;
+import com.imherobrine.common.HerobrineStructureBuilder;
 import com.imherobrine.common.HerobrineStructureType;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -92,16 +94,68 @@ public final class HerobrineMenuScreen extends Screen {
             HerobrineStructureType type = HerobrineStructureType.values()[Math.floorMod(selectedIndex, HerobrineStructureType.values().length)];
             graphics.drawCenteredString(font, type.title(), center, top + 70, 0xFFE080);
             graphics.drawCenteredString(font, "Preview · rotate before building", center, top + 91, 0xB0B0B0);
-            drawPreview(graphics, center, top + 107, type);
+            if (HerobrineClientConfig.previewEnabled()) {
+                drawPreview(graphics, center, top + 107, type);
+            } else {
+                graphics.drawCenteredString(font, "Preview disabled in client settings", center, top + 125, 0xFFAAAAAA);
+            }
         } else {
             graphics.drawCenteredString(font, "Choose a lightning pattern, then use H to strike", center, top + 145, 0xB0B0B0);
         }
     }
 
     private void drawPreview(GuiGraphics graphics, int center, int y, HerobrineStructureType type) {
+        int panelLeft = center - 100;
+        graphics.fill(panelLeft, y - 4, center + 100, y + 44, 0xC0101010);
+        graphics.fill(panelLeft, y - 4, center + 100, y - 3, 0xFF707070);
+        graphics.fill(panelLeft, y + 43, center + 100, y + 44, 0xFF707070);
+        if (type == HerobrineStructureType.WORD_HEROBRINE || type == HerobrineStructureType.WORD_STOP
+                || type.name().startsWith("LETTER_")) {
+            String word = switch (type) {
+                case WORD_HEROBRINE -> "HEROBRINE";
+                case WORD_STOP -> "STOP";
+                default -> type.name().substring("LETTER_".length());
+            };
+            int block = word.length() > 5 ? 3 : 5;
+            int wordWidth = word.length() * 6 * block - block;
+            int startX = center - wordWidth / 2;
+            for (int index = 0; index < word.length(); index++) {
+                String[] glyph = HerobrineStructureBuilder.glyph(word.charAt(index));
+                if (glyph == null) continue;
+                for (int row = 0; row < glyph.length; row++) {
+                    for (int col = 0; col < glyph[row].length(); col++) {
+                        if (glyph[row].charAt(col) == '1') {
+                            int x = startX + index * 6 * block + col * block;
+                            int py = y + 2 + row * 5;
+                            graphics.fill(x, py, x + block - 1, py + 3, 0xFFFFD45A);
+                        }
+                    }
+                }
+            }
+            return;
+        }
+        if (type.name().contains("PYRAMID")) {
+            int width = switch (type) {
+                case SAND_PYRAMID_SMALL, COBBLE_PYRAMID_SMALL -> 5;
+                case SAND_PYRAMID_MEDIUM, COBBLE_PYRAMID_MEDIUM -> 9;
+                default -> 13;
+            };
+            int cell = 3;
+            int left = center - width * cell / 2;
+            int top = y + 1;
+            for (int layer = 0; layer < (width + 1) / 2; layer++) {
+                int half = width / 2 - layer;
+                for (int dx = -half; dx <= half; dx++) for (int dz = -half; dz <= half; dz++) {
+                    graphics.fill(left + (width / 2 + dx) * cell, top + (width / 2 + dz) * cell,
+                            left + (width / 2 + dx + 1) * cell - 1, top + (width / 2 + dz + 1) * cell - 1,
+                            type.name().startsWith("SAND") ? 0xFFE3C15A : 0xFF858585);
+                }
+            }
+            return;
+        }
         if (type == HerobrineStructureType.MINE_TUNNEL) {
-            graphics.drawCenteredString(font, "Tunnel cross-section · redstone torches on inner walls", center, y - 8, 0xB0B0B0);
-            int cell = 12;
+            graphics.drawCenteredString(font, "Tunnel cross-section · inner torches", center, y - 9, 0xB0B0B0);
+            int cell = 8;
             int left = center - 4 * cell;
             int top = y + 10;
             for (int row = 0; row < 4; row++) {
@@ -113,7 +167,6 @@ public final class HerobrineMenuScreen extends Screen {
             }
             graphics.fill(left + 2 * cell, top + cell, left + 2 * cell + cell - 2, top + 2 * cell - 2, 0xFFFF3333);
             graphics.fill(left + 6 * cell, top + cell, left + 6 * cell + cell - 2, top + 2 * cell - 2, 0xFFFF3333);
-            graphics.drawCenteredString(font, "████████████████", center, top + 4 * cell + 5, 0xFFAAAAAA);
             return;
         }
         String pattern = switch (type) {

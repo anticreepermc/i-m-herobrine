@@ -29,9 +29,11 @@ public final class HerobrinePermissionConfig {
     private static final int DEFAULT_TREE_TORCH_RADIUS = 30;
     private static final int MAX_ACTION_RADIUS = 70;
     private static final Map<HerobrineAction, Integer> LEVELS = new EnumMap<>(HerobrineAction.class);
+    private static final Map<HerobrineAction, Boolean> ENABLED = new EnumMap<>(HerobrineAction.class);
     private static volatile int leafRadius = DEFAULT_LEAF_RADIUS;
     private static volatile int treeTorchRadius = DEFAULT_TREE_TORCH_RADIUS;
     private static volatile int commandPermissionLevel = DEFAULT_PERMISSION_LEVEL;
+    private static volatile boolean commandsEnabled = true;
 
     static {
         for (HerobrineAction action : HerobrineAction.values()) {
@@ -39,6 +41,7 @@ public final class HerobrinePermissionConfig {
                 continue;
             }
             LEVELS.put(action, DEFAULT_PERMISSION_LEVEL);
+            ENABLED.put(action, true);
         }
     }
 
@@ -51,11 +54,13 @@ public final class HerobrinePermissionConfig {
         leafRadius = DEFAULT_LEAF_RADIUS;
         treeTorchRadius = DEFAULT_TREE_TORCH_RADIUS;
         commandPermissionLevel = DEFAULT_PERMISSION_LEVEL;
+        commandsEnabled = true;
         for (HerobrineAction action : HerobrineAction.values()) {
             if (!action.hasPermissionSetting()) {
                 continue;
             }
             LEVELS.put(action, DEFAULT_PERMISSION_LEVEL);
+            ENABLED.put(action, true);
         }
         try {
             Files.createDirectories(configFile.getParent());
@@ -79,10 +84,16 @@ public final class HerobrinePermissionConfig {
                 int level = parseLevel(properties.getProperty(key), DEFAULT_PERMISSION_LEVEL, key);
                 LEVELS.put(action, level);
                 properties.setProperty(key, Integer.toString(level));
+                String enabledKey = featureKey(action);
+                boolean enabled = parseBoolean(properties.getProperty(enabledKey), true, enabledKey);
+                ENABLED.put(action, enabled);
+                properties.setProperty(enabledKey, Boolean.toString(enabled));
             }
 
             commandPermissionLevel = parseLevel(properties.getProperty("permissions.commands"), DEFAULT_PERMISSION_LEVEL, "permissions.commands");
             properties.setProperty("permissions.commands", Integer.toString(commandPermissionLevel));
+            commandsEnabled = parseBoolean(properties.getProperty("features.commands.enabled"), true, "features.commands.enabled");
+            properties.setProperty("features.commands.enabled", Boolean.toString(commandsEnabled));
 
             leafRadius = parseRadius(properties.getProperty("ranges.leaf_clear"), DEFAULT_LEAF_RADIUS, "ranges.leaf_clear");
             treeTorchRadius = parseRadius(properties.getProperty("ranges.tree_torches"), DEFAULT_TREE_TORCH_RADIUS, "ranges.tree_torches");
@@ -96,7 +107,9 @@ public final class HerobrinePermissionConfig {
     }
 
     public static boolean canUse(ServerPlayer player, HerobrineAction action) {
-        int requiredLevel = LEVELS.getOrDefault(action.permissionAction(), DEFAULT_PERMISSION_LEVEL);
+        HerobrineAction permission = action.permissionAction();
+        if (!ENABLED.getOrDefault(permission, true)) return false;
+        int requiredLevel = LEVELS.getOrDefault(permission, DEFAULT_PERMISSION_LEVEL);
         return player.hasPermissions(requiredLevel);
     }
 
@@ -114,7 +127,7 @@ public final class HerobrinePermissionConfig {
 
     public static void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher) {
         var root = Commands.literal("imherobrine")
-                .requires(source -> source.hasPermission(commandPermissionLevel));
+                .requires(source -> commandsEnabled && source.hasPermission(commandPermissionLevel));
         root.then(Commands.literal("radius")
                 .then(Commands.literal("leaves")
                         .then(Commands.argument("blocks", IntegerArgumentType.integer(0, MAX_ACTION_RADIUS))
@@ -219,8 +232,10 @@ public final class HerobrinePermissionConfig {
                     continue;
                 }
                 properties.putIfAbsent(configKey(action), Integer.toString(LEVELS.getOrDefault(action, DEFAULT_PERMISSION_LEVEL)));
+                properties.putIfAbsent(featureKey(action), Boolean.toString(ENABLED.getOrDefault(action, true)));
             }
             properties.putIfAbsent("permissions.commands", Integer.toString(commandPermissionLevel));
+            properties.putIfAbsent("features.commands.enabled", Boolean.toString(commandsEnabled));
             properties.putIfAbsent("ranges.leaf_clear", Integer.toString(leafRadius));
             properties.putIfAbsent("ranges.tree_torches", Integer.toString(treeTorchRadius));
             Files.createDirectories(configFile.getParent());
@@ -272,7 +287,19 @@ public final class HerobrinePermissionConfig {
         return fallback;
     }
 
+    private static boolean parseBoolean(String value, boolean fallback, String key) {
+        if (value == null) return fallback;
+        if (value.equalsIgnoreCase("true")) return true;
+        if (value.equalsIgnoreCase("false")) return false;
+        LOGGER.log(System.Logger.Level.WARNING, "Invalid boolean for " + key + "; using " + fallback);
+        return fallback;
+    }
+
     private static String configKey(HerobrineAction action) {
         return "permissions." + action.permissionAction().name().toLowerCase(Locale.ROOT);
+    }
+
+    private static String featureKey(HerobrineAction action) {
+        return "features." + action.name().toLowerCase(Locale.ROOT) + ".enabled";
     }
 }

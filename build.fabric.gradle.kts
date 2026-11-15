@@ -87,6 +87,7 @@ dependencies {
 	// implementation(libs.moulberry.mixinconstraints)
 	// include(libs.moulberry.mixinconstraints)
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${prop("deps.fabric-api")}")
+	modCompileOnly("com.terraformersmc:modmenu:${prop("deps.modmenu")}")
 	modLocalRuntime("com.terraformersmc:modmenu:${prop("deps.modmenu")}")
 }
 

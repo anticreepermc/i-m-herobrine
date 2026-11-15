@@ -57,7 +57,8 @@ sealed class Loader(val id: String) {
 				accessWidener = "aw/${ctx.currentMcVersion}.accesswidener",
 				entrypoints = mapOf(
 					"main" to listOf("com.imherobrine.fabric.ImHerobrineFabric"),
-					"client" to listOf("com.imherobrine.fabric.ImHerobrineFabricClient")
+					"client" to listOf("com.imherobrine.fabric.ImHerobrineFabricClient"),
+					"modmenu" to listOf("com.imherobrine.fabric.ImHerobrineModMenu")
 				),
 				mixins = listOf("${ctx.modId}.mixins.json"),
 				depends = ctx.extension.dependencies.required.associate { it.modid.get() to it.fabricLikeVersionRange.get() },

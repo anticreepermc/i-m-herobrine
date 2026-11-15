@@ -339,7 +339,7 @@ public final class HerobrineGameLogic {
         ServerLevel level = (ServerLevel) player.level();
         long now = level.getGameTime();
         if (now < LIGHTNING_COOLDOWNS.getOrDefault(player.getUUID(), 0L)) return;
-        LIGHTNING_COOLDOWNS.put(player.getUUID(), now + 10L);
+        LIGHTNING_COOLDOWNS.put(player.getUUID(), now + 5L);
         HitResult hit = player.pick(128.0D, 0.0F, false);
         Vec3 pos;
         if (hit.getType() == HitResult.Type.BLOCK) {
