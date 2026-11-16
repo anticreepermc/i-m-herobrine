@@ -24,7 +24,75 @@ import com.google.gson.JsonParser;
 public final class HerobrineStructureBuilder {
     private static final int MAX_BLOCKS = 12000;
 
+    public record PreviewBlock(int x, int y, int z, BlockState state) {
+    }
+
     private HerobrineStructureBuilder() {
+    }
+
+    public static List<PreviewBlock> previewBlocks(HerobrineStructureType type) {
+        List<PreviewBlock> blocks = new java.util.ArrayList<>();
+        switch (type) {
+            case SAND_PYRAMID_SMALL, SAND_PYRAMID_MEDIUM, SAND_PYRAMID_LARGE,
+                    COBBLE_PYRAMID_SMALL, COBBLE_PYRAMID_MEDIUM, COBBLE_PYRAMID_LARGE -> {
+                int width = switch (type) {
+                    case SAND_PYRAMID_SMALL, COBBLE_PYRAMID_SMALL -> 5;
+                    case SAND_PYRAMID_MEDIUM, COBBLE_PYRAMID_MEDIUM -> 9;
+                    default -> 13;
+                };
+                BlockState state = (type.name().startsWith("SAND") ? Blocks.SAND : Blocks.COBBLESTONE).defaultBlockState();
+                for (int layer = 0; layer < (width + 1) / 2; layer++) {
+                    int half = width / 2 - layer;
+                    for (int x = -half; x <= half; x++) for (int z = -half; z <= half; z++) {
+                        blocks.add(new PreviewBlock(x, layer, z, state));
+                    }
+                }
+            }
+            case WORD_STOP, WORD_HEROBRINE, LETTER_H, LETTER_E, LETTER_R, LETTER_O, LETTER_B, LETTER_I, LETTER_N -> {
+                String word = switch (type) {
+                    case WORD_STOP -> "STOP";
+                    case WORD_HEROBRINE -> "HEROBRINE";
+                    default -> type.name().substring("LETTER_".length());
+                };
+                int offset = 0;
+                BlockState state = Blocks.GLOWSTONE.defaultBlockState();
+                for (char character : word.toCharArray()) {
+                    String[] rows = glyph(character);
+                    if (rows != null) for (int y = 0; y < rows.length; y++) for (int x = 0; x < rows[y].length(); x++) {
+                        if (rows[y].charAt(x) == '1') blocks.add(new PreviewBlock(offset + x, 6 - y, 0, state));
+                    }
+                    offset += 6;
+                }
+            }
+            case MINE_TUNNEL -> {
+                BlockState stone = Blocks.COBBLESTONE.defaultBlockState();
+                BlockState torch = Blocks.REDSTONE_WALL_TORCH.defaultBlockState()
+                        .setValue(net.minecraft.world.level.block.RedstoneWallTorchBlock.FACING, Direction.SOUTH);
+                for (int length = 0; length < 16; length++) {
+                    for (int y = -1; y <= 2; y++) for (int side = -1; side <= 2; side++) {
+                        if (y == -1 || y == 2 || side == -1 || side == 2) {
+                            blocks.add(new PreviewBlock(length, y, side, stone));
+                        }
+                    }
+                    if (length % 4 == 1) blocks.add(new PreviewBlock(length, 1, 0, torch));
+                }
+            }
+            case CREEPY_SIGNS -> {
+                for (int i = 0; i < 3; i++) blocks.add(new PreviewBlock(i * 2, 0, 0, Blocks.OAK_SIGN.defaultBlockState()));
+            }
+            case HEROBRINE_TOTEM -> {
+                for (int x = -1; x <= 1; x++) for (int z = -1; z <= 1; z++) {
+                    blocks.add(new PreviewBlock(x, 0, z, (x == 0 && z == 0 ? Blocks.MOSSY_COBBLESTONE : Blocks.GOLD_BLOCK).defaultBlockState()));
+                }
+                blocks.add(new PreviewBlock(0, 1, 0, Blocks.NETHERRACK.defaultBlockState()));
+                for (Direction side : Direction.Plane.HORIZONTAL) {
+                    blocks.add(new PreviewBlock(side.getStepX(), 1, side.getStepZ(),
+                            Blocks.REDSTONE_WALL_TORCH.defaultBlockState().setValue(net.minecraft.world.level.block.RedstoneWallTorchBlock.FACING, side)));
+                }
+                blocks.add(new PreviewBlock(0, 2, 0, Blocks.FIRE.defaultBlockState()));
+            }
+        }
+        return List.copyOf(blocks);
     }
 
     public static void build(ServerPlayer player, HerobrineStructureType type, int rotation) {
@@ -160,8 +228,6 @@ public final class HerobrineStructureBuilder {
                     else if (!frame && put(level, pos, Blocks.AIR.defaultBlockState())) count++;
                 }
             }
-            BlockPos rail = rotate(origin, length, 0, 0, rotation);
-            if (level.getBlockState(rail).isAir() && put(level, rail, Blocks.REDSTONE_WIRE.defaultBlockState())) count++;
             if (length % 4 == 1) {
                 BlockPos torchPos = rotate(origin, length, 1, 0, rotation);
                 Direction inward = switch (Math.floorMod(rotation, 4)) {

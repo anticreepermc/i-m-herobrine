@@ -16,7 +16,7 @@ public enum HerobrineStructureType {
     LETTER_B("B", HerobrineAction.SELECT_LETTER_B),
     LETTER_I("I", HerobrineAction.SELECT_LETTER_I),
     LETTER_N("N", HerobrineAction.SELECT_LETTER_N),
-    MINE_TUNNEL("2×2 redstone mine tunnel", HerobrineAction.SELECT_MINE_TUNNEL),
+    MINE_TUNNEL("2×2 torch-lit mine tunnel", HerobrineAction.SELECT_MINE_TUNNEL),
     CREEPY_SIGNS("Creepy signs", HerobrineAction.SELECT_CREEPY_SIGNS),
     HEROBRINE_TOTEM("Herobrine totem", HerobrineAction.SELECT_HEROBRINE_TOTEM);
 

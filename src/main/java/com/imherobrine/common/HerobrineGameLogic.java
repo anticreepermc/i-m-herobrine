@@ -265,10 +265,13 @@ public final class HerobrineGameLogic {
         for (Direction side : Direction.Plane.HORIZONTAL) {
             BlockPos support = new BlockPos(trunk.getX(), torchY, trunk.getZ());
             BlockPos torchPos = support.relative(side);
-            if (torchPos.distSqr(center) > radiusSq || !level.hasChunkAt(torchPos) || !level.getBlockState(torchPos).isAir()) {
+            if (torchPos.distSqr(center) > radiusSq || !level.hasChunkAt(torchPos)) {
                 continue;
             }
-            var torchState = Blocks.REDSTONE_WALL_TORCH.defaultBlockState().setValue(RedstoneWallTorchBlock.FACING, side.getOpposite());
+            BlockState target = level.getBlockState(torchPos);
+            if (!target.isAir() && !target.is(BlockTags.LEAVES)) continue;
+            if (target.is(BlockTags.LEAVES)) level.destroyBlock(torchPos, false);
+            var torchState = Blocks.REDSTONE_WALL_TORCH.defaultBlockState().setValue(RedstoneWallTorchBlock.FACING, side);
             if (torchState.canSurvive(level, torchPos)) {
                 level.setBlock(torchPos, torchState, 3);
             }
