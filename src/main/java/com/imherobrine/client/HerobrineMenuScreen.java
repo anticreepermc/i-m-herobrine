@@ -136,7 +136,7 @@ public final class HerobrineMenuScreen extends Screen {
         float modelCenterY = (minY + maxY + 1) / 2.0F;
         float modelCenterZ = (minZ + maxZ + 1) / 2.0F;
 
-        PoseStack pose = graphics.pose();
+        PoseStack pose = new PoseStack();
         pose.pushPose();
         pose.translate(center, top + 45, 180);
         pose.scale(scale, -scale, scale);
